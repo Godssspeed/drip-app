@@ -6,6 +6,7 @@ const session = require("express-session");
 const bcrypt = require("bcryptjs");
 const { SERVER_PORT, CONNECTION_STRING, SESSION_SECRET } = process.env;
 const { register, login, get_user, logout } = require("./authCtrl/authCtrl");
+const { getPosts } = require("./controller/controller");
 
 const app = express();
 
@@ -27,10 +28,14 @@ massive(CONNECTION_STRING).then(db => {
   console.log("Database Connected");
 });
 
+// AUTH REQUESTS
 app.post("/auth/register", register);
 app.post("/auth/login", login);
 app.get("/auth/user", get_user);
-app.get("/auth/logout", logout);
+app.post("/auth/logout", logout);
+
+// DATA / USER REQUESTS
+app.get("/api/posts", getPosts);
 
 app.listen(SERVER_PORT || 4000, () =>
   console.log(`Listening on ${SERVER_PORT}`)

@@ -1,0 +1,7 @@
+.header {
+  height: 8vh;
+  background: white;
+  padding: 2rem 0 0 0;
+  border-bottom: 4px ridge rgb(29, 161, 242, 0.2);
+  box-shadow: 0 10px 30px rgb(29, 161, 242, 0.2);
+}

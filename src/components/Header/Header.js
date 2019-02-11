@@ -1,20 +1,25 @@
 import React, { Component } from "react";
 import Search from "../Search/Search";
 import { Link } from "react-router-dom";
-import Logout from "../Auth/Logout";
+import "./Header.css";
 
-class Header extends Component {
-  render() {
-    return (
-      <div>
-        <Link to="/dashboard">Header</Link>
-        <Search />
-        <Link to="/explore">Explore</Link>
-        <Link to="/profile">Go to Profile</Link>
-        <Logout />
-      </div>
-    );
-  }
-}
+const Header = ({ link, loggedIn, logout, user }) => {
+  console.log(loggedIn);
+  return (
+    <div className="header">
+      {user && user.username ? (
+        <Link to="/">
+          <span className="btn header-btn" onClick={() => logout()}>
+            Logout
+          </span>
+        </Link>
+      ) : (
+        <Link className="login" to="/">
+          Login/Register
+        </Link>
+      )}
+    </div>
+  );
+};
 
 export default Header;

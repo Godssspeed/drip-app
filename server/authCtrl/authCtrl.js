@@ -20,17 +20,17 @@ const login = async (req, res) => {
   const db = req.app.get("db");
 
   db.find_user(username).then(async response => {
-    // console.log(response);
+    console.log(response);
     if (!response.length) {
       res.status(401).json({ error: "No user found" });
     } else {
       const isMatch = await bcrypt.compare(password, response[0].hash);
       if (!isMatch) {
-        res.status(401).json({ error: "Wrong Password" });
+        return res.status(401).json({ error: "Wrong Password" });
       } else {
         req.session.user = { username: response[0].username };
         console.log(req.session);
-        res.status(200).json({ username: response[0].username });
+        res.status(200).json(req.session.user);
       }
     }
   });
@@ -39,11 +39,12 @@ const login = async (req, res) => {
 const logout = (req, res) => {
   req.session.destroy();
   console.log(req.session);
-  return res.sendStatus(200);
+  res.status(200).json(req.session);
 };
 
 const get_user = (req, res) => {
-  if (req.session.user) {
+  const { username } = req.body;
+  if (req.session.user.username === username) {
     res.json(req.session.user);
   } else {
     res.status(401).json({ error: "Please log in" });

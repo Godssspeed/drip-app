@@ -25,7 +25,7 @@ export function login(username, password) {
   };
 }
 
-export function get_user() {
+export function getUser() {
   return {
     type: GET_USER,
     payload: axios.get("/auth/user")
@@ -35,7 +35,7 @@ export function get_user() {
 export function logout() {
   return {
     type: LOGOUT,
-    payload: axios.get("/auth/logout")
+    payload: axios.post("/auth/logout")
   };
 }
 
@@ -52,7 +52,7 @@ export default function authReducer(state = initialState, action) {
     case `${GET_USER}_FULFILLED`:
       return { ...state, user: action.payload.data };
     case `${LOGOUT}_FULFILLED`:
-      return { ...state, user: action.payload.data };
+      return { ...state, user: {} };
 
     default:
       return state;

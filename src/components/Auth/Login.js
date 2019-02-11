@@ -1,14 +1,17 @@
 import React, { Component } from "react";
-import { Link, Redirect } from "react-router-dom";
-import { login } from "../../ducks/authReducer";
+import Header from "../Header/Header";
+import { login, register } from "../../ducks/authReducer";
 import { connect } from "react-redux";
+import axios from "axios";
+import "./Login.css";
 
 class Login extends Component {
   constructor(props) {
     super(props);
     this.state = {
       username: "",
-      password: ""
+      password: "",
+      newUser: false
     };
   }
 
@@ -20,62 +23,87 @@ class Login extends Component {
     this.setState({ username: "", password: "" });
   };
 
-  handleSubmit = e => {
-    const { username, password } = this.state;
+  registerUser = (e, username, password) => {
     e.preventDefault();
-    this.props.login(username, password);
+    this.props.register(username, password);
     this.clearInputs();
-    this.props.history.push("/dashboard");
+    this.props.history.push("/");
+  };
+
+  loginUser = async (e, username, password) => {
+    e.preventDefault();
+    const response = await this.props.login(username, password);
+    console.log(response);
+    this.clearInputs();
+    // this.props.history.push("/home");
+    // axios
+    //   .get("/auth/user")
+    //   .then(response => {
+    //     console.log(response);
+    //   })
+    //   .catch(error => {
+    //     console.log(error);
+    //     window.alert("Wrong Username /Password Combination");
+    //   });
   };
 
   render() {
+    const { username, password, newUser } = this.state;
     console.log(this.state);
-    console.log(this.props.user);
-    // if (this.props.username) {
-    //   return <Redirect push to="/dashboard" />;
-    // }
+    // console.log(this.props.user);
+    // // if (this.props.username) {
+    // //   return <Redirect push to="/dashboard" />;
+    // // }
     return (
-      <div>
-        <form onSubmit={this.handleSubmit}>
+      <div className="login-page">
+        <Header />
+
+        <form
+          className="login-form"
+          onSubmit={e => {
+            newUser
+              ? this.registerUser(e, username, password)
+              : this.loginUser(e, username, password);
+          }}
+        >
+          <h1 className="userChange">{newUser ? "Register" : "Login"}</h1>
+          <label>Username: </label>
           <input
-            value={this.state.username}
+            className="input"
+            value={username}
             type="username"
             name="username"
-            placeholder="username"
-            onChange={this.handleChange}
+            placeholder=" username"
+            required
+            onChange={e => this.handleChange(e)}
           />
+          <label>Password: </label>
           <input
-            value={this.state.password}
+            className="input"
+            value={password}
             type="password"
             name="password"
-            placeholder="password"
+            placeholder=" password"
             autoComplete="new-password"
-            onChange={this.handleChange}
+            required
+            onChange={e => this.handleChange(e)}
           />
-          <span className="btn login-btn" onClick={this.handleSubmit}>
-            Login
+          <input className="btn submit-btn" type="submit" />
+          <span
+            className="btn newUser-btn"
+            onClick={() => this.setState({ newUser: !newUser })}
+          >
+            Click here to {newUser ? "Login" : "Register"}
           </span>
         </form>
-        {/* <Link to="/dashboard">
-          <span className="btn login-btn">Login</span>
-        </Link> */}
-        {/* <Link to="/register">
-          <span className="btn register-btn">Register</span>
-        </Link> */}
       </div>
     );
   }
 }
 
-const mapStateToProps = state => {
-  const { user } = state;
-
-  return {
-    user
-  };
-};
+const mapStateToProps = ({ authReducer }) => ({ authReducer });
 
 export default connect(
   mapStateToProps,
-  { login }
+  { login, register }
 )(Login);
